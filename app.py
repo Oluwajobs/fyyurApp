@@ -115,32 +115,52 @@ def index():
 
 @app.route('/venues')
 def venues():
-  # TODO: replace with real venues data.
+  # DONE: replace with real venues data.
   #       num_upcoming_shows should be aggregated based on number of upcoming shows per venue.
+  all_areas = Venue.query.with_entities(func.count(Venue.id), Venue.city, Venue.state).group_by(Venue.city, Venue.state).all()
+  data = []
+
+  for area in all_areas:
+    area_venues = Venue.query.filter_by(state=area.state).filter_by(city=area.city).all()
+    venue_data = []
+
+    for venue in area_venues:
+      venue_data.append({   
+        "id": venue.id,
+        "name": venue.name,
+        "num_upcoming_shows": len(db.session.query(Show).filter(Show.venue_id==1).filter(Show.start_time > datetime.now()).all())
+      })
+
+    data.append({
+      "city": area.city,
+      "state": area.state,
+      "venues": venue_data
+    })
+
+  return render_template('pages/venues.html', areas=data)
+
   
-  
-  data=[{
-    "city": "San Francisco",
-    "state": "CA",
-    "venues": [{
-      "id": 1,
-      "name": "The Musical Hop",
-      "num_upcoming_shows": 0,
-    }, {
-      "id": 3,
-      "name": "Park Square Live Music & Coffee",
-      "num_upcoming_shows": 1,
-    }]
-  }, {
-    "city": "New York",
-    "state": "NY",
-    "venues": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }]
-  return render_template('pages/venues.html', areas=data);
+  # data=[{
+  #   "city": "San Francisco",
+  #   "state": "CA",
+  #   "venues": [{
+  #     "id": 1,
+  #     "name": "The Musical Hop",
+  #     "num_upcoming_shows": 0,
+  #   }, {
+  #     "id": 3,
+  #     "name": "Park Square Live Music & Coffee",
+  #     "num_upcoming_shows": 1,
+  #   }]
+  # }, {
+  #   "city": "New York",
+  #   "state": "NY",
+  #   "venues": [{
+  #     "id": 2,
+  #     "name": "The Dueling Pianos Bar",
+  #     "num_upcoming_shows": 0,
+  #   }]
+  # }]
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
@@ -306,15 +326,17 @@ def delete_venue(venue_id):
 #  ----------------------------------------------------------------
 @app.route('/artists')
 def artists():
-  # TODO: replace with real data returned from querying the database
+  # DONE: replace with real data returned from querying the database
   artist_data = db.session.query(Artist).all()
   data = []
-  
+
   for artist in artist_data:
     data.append({
       "id": artist.id,
       "name": artist.name,
     })
+  
+  return render_template('pages/artists.html', artists=data)
   # data=[{
   #   "id": 4,
   #   "name": "Guns N Petals",
@@ -325,7 +347,6 @@ def artists():
   #   "id": 6,
   #   "name": "The Wild Sax Band",
   # }]
-  return render_template('pages/artists.html', artists=data)
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():

@@ -307,16 +307,24 @@ def delete_venue(venue_id):
 @app.route('/artists')
 def artists():
   # TODO: replace with real data returned from querying the database
-  data=[{
-    "id": 4,
-    "name": "Guns N Petals",
-  }, {
-    "id": 5,
-    "name": "Matt Quevedo",
-  }, {
-    "id": 6,
-    "name": "The Wild Sax Band",
-  }]
+  artist_data = db.session.query(Artist).all()
+  data = []
+  
+  for artist in artist_data:
+    data.append({
+      "id": artist.id,
+      "name": artist.name,
+    })
+  # data=[{
+  #   "id": 4,
+  #   "name": "Guns N Petals",
+  # }, {
+  #   "id": 5,
+  #   "name": "Matt Quevedo",
+  # }, {
+  #   "id": 6,
+  #   "name": "The Wild Sax Band",
+  # }]
   return render_template('pages/artists.html', artists=data)
 
 @app.route('/artists/search', methods=['POST'])
@@ -524,7 +532,7 @@ def create_artist_submission():
 @app.route('/shows')
 def shows():
   # displays list of shows at /shows
-  # TODO: replace with real venues data.
+  # Done: replace with real venues data.
   all_shows = db.session.query(Show).join(Artist).join(Venue).all()
   data = []
   for show in all_shows:
@@ -536,6 +544,8 @@ def shows():
       "artist_image_link": show.artist.image_link,
       "start_time": show.start_time.strftime('%Y-%m-%d %H:%M:%S')
     })
+  return render_template('pages/shows.html', shows=data)
+  
   # data=[{
   #   "venue_id": 1,
   #   "venue_name": "The Musical Hop",
@@ -572,7 +582,6 @@ def shows():
   #   "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
   #   "start_time": "2035-04-15T20:00:00.000Z"
   # }]
-  return render_template('pages/shows.html', shows=data)
 
 @app.route('/shows/create')
 def create_shows():

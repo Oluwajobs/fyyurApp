@@ -24,6 +24,7 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+
 # DONE: connect to a local postgresql database
 
 #----------------------------------------------------------------------------#
@@ -172,54 +173,55 @@ def create_venue_form():
   return render_template('forms/new_venue.html', form=form)
 
 @app.route('/venues/create', methods=['POST'])
+
 def create_venue_submission():
   # DONE: insert form data as a new Venue record in the db, instead
   error = False
-  form = VenueForm
-  if form.validate_on_submit():
-    try:
-      name = request.form['name']
-      city = request.form['city']
-      state = request.form['state']
-      address = request.form['address']
-      phone = request.form['phone']
-      genres = request.form.getlist('genres')
-      image_link = request.form['image_link']
-      facebook_link = request.form['facebook_link']
-      website_link = request.form['website_link']
-      seeking_talent = True if 'seeking_talent' in request.form else False
-      seeking_description = request.form['seeking_description']
+  # form = VenueForm()
+  # if form.validate_on_submit():
+  try:
+    name = request.form['name']
+    city = request.form['city']
+    state = request.form['state']
+    address = request.form['address']
+    phone = request.form['phone']
+    genres = request.form.getlist('genres')
+    image_link = request.form['image_link']
+    facebook_link = request.form['facebook_link']
+    website_link = request.form['website_link']
+    seeking_talent = True if 'seeking_talent' in request.form else False
+    seeking_description = request.form['seeking_description']
 
-      venue = Venue(name=name, city=city, state=state, address=address, phone=phone, genres=genres, image_link=image_link, facebook_link=facebook_link, website_link=website_link, seeking_talent=seeking_talent, seeking_description=seeking_description)
-      
-      db.session.add(venue)
-      db.session.commit()
-
-    except:
-      error=True
-      db.session.rollback()
-      print(sys.exc_info())
-
-    finally:
-      db.session.close()
-    # DONE: on unsuccessful db insert, flash an error instead.
-    # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
-    if error:
-      flash("An error occurred. Venue " + request.form['name'] + ' could not be listed.')
+    venue = Venue(name=name, city=city, state=state, address=address, phone=phone, genres=genres, image_link=image_link, facebook_link=facebook_link, website_link=website_link, seeking_talent=seeking_talent, seeking_description=seeking_description)
     
-    # on successful db insert, flash success
-    if not error:
-      flash('Venue ' + request.form['name'] + ' was successfully listed!')
+    db.session.add(venue)
+    db.session.commit()
 
-    # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-    # DONE: modify data to be the data object returned from db insertion
-    return render_template('pages/home.html')
+  except:
+    error=True
+    db.session.rollback()
+    print(sys.exc_info())
+
+  finally:
+    db.session.close()
+  # DONE: on unsuccessful db insert, flash an error instead.
+  # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
+  if error:
+    flash("An error occurred. Venue " + request.form['name'] + ' could not be listed.')
   
-  else:
-    for error in form.errors:
-      flash(error)
+  # on successful db insert, flash success
+  if not error:
+    flash('Venue ' + request.form['name'] + ' was successfully listed!')
+
+  # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+  # DONE: modify data to be the data object returned from db insertion
+  return render_template('pages/home.html')
   
-  return render_template('forms/new_venue.html', form=form)
+  # else:
+  #   for error in form.errors:
+  #     flash(error)
+  
+  # return render_template('forms/new_venue.html', form=form)
   
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
@@ -377,7 +379,7 @@ def edit_artist_submission(artist_id):
     artist.city = request.form['city']
     artist.state = request.form['state']
     artist.phone = request.form['phone']
-    artist.genres = request.form['genres']
+    artist.genres = request.form.getlist('genres')
     artist.image_link = request.form['image_link']
     artist.facebook_link = request.form['facebook_link']
     artist.website_link = request.form['website_link']
@@ -433,7 +435,7 @@ def edit_venue_submission(venue_id):
     venue.state = request.form['state']
     venue.address = request.form['address']
     venue.phone = request.form['phone']
-    venue.genres = request.form['genres']
+    venue.genres = request.form.getlist('genres')
     venue.image_link = request.form['image_link']
     venue.facebook_link = request.form['facebook_link']
     venue.website_link = request.form['website_link']
@@ -472,7 +474,7 @@ def create_artist_submission():
     city = request.form['city']
     state = request.form['state']
     phone = request.form['phone']
-    genres = request.form['genres']
+    genres = request.form.getlist('genres')
     facebook_link = request.form['facebook_link']
     image_link = request.form['image_link']
     website_link = request.form['website_link']

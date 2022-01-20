@@ -85,7 +85,7 @@ class VenueForm(Form):
     phone = StringField(
         'phone', validators=[DataRequired(),
                     Regexp(r"^[0-9]*$", 
-                    message="Phone numbers should only contain digits")]
+                    message="'Phone numbers should only contain digits'")]
     )
     image_link = StringField(
         'image_link'
@@ -195,10 +195,12 @@ class ArtistForm(Form):
     )
     phone = StringField(
         # TODO implement validation logic for state
-        'phone'
+        'phone', validators=[DataRequired(),
+                    Regexp(r"^[0-9]*$", 
+                    message="'Phone numbers should only contain digits'")]
     )
     image_link = StringField(
-        'image_link'
+        'image_link', validators=[URL()]
     )
     genres = SelectMultipleField(
         'genres', validators=[DataRequired()],
@@ -230,7 +232,7 @@ class ArtistForm(Form):
      )
 
     website_link = StringField(
-        'website_link'
+        'website_link', validators=[URL()]
      )
 
     seeking_venue = BooleanField( 'seeking_venue' )

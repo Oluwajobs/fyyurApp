@@ -4,6 +4,8 @@ from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField
 from wtforms.validators import DataRequired, AnyOf, URL, Regexp
 
 class ShowForm(Form):
+    class Meta:
+        csrf = False # Disable CSRF
     artist_id = StringField(
         'artist_id'
     )
@@ -17,6 +19,8 @@ class ShowForm(Form):
     )
 
 class VenueForm(Form):
+    class Meta:
+        csrf = False # Disable CSRF
     name = StringField(
         'name', validators=[DataRequired()]
     )
@@ -131,6 +135,8 @@ class VenueForm(Form):
 
 
 class ArtistForm(Form):
+    class Meta:
+        csrf = False # Disable CSRF
     name = StringField(
         'name', validators=[DataRequired()]
     )

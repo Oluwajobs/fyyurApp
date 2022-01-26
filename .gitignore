@@ -1,2 +1,6 @@
-_pycache_
-env
+__pycache__/
+__pycache__
+env/
+.vscode
+.DS_Store
+.DS_Store?
